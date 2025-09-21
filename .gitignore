@@ -1,0 +1,45 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+venv/
+venv311/
+.env/
+
+# Data folder - keep folder, ignore all files
+/data/*
+!/data/.gitkeep
+
+# Embeddings folder - keep folder, ignore all files
+embeddings/*
+!embeddings/.gitkeep
+
+
+# Ignore locally downloaded or generated models in the backend
+/backend/models/*.pth
+/backend/models/*.joblib
+/backend/models/*.pkl
+
+# Ignore cloned Hugging Face repo
+/backend/Novartis-models/
+
+# Jupyter notebooks checkpoints
+*.ipynb_checkpoints/
+
+# --- Tools & OS ---
+# IDE / Editor specific
+.vscode/
+.idea/
+
+# Operating System generated files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Streamlit cache
+.streamlit/
