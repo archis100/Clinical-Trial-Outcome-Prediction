@@ -23,3 +23,10 @@ def predict_endpoint(data: dict | list[dict]):
     df = pd.DataFrame(data if isinstance(data, list) else [data])
     predictions = predict(df)
     return predictions
+
+if __name__ == "__main__":
+    import uvicorn
+
+    # Pass the app as an import string: "module_name:app_variable_name"
+    # In this case, "main:app" because your file is main.py and your app object is named 'app'
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)
