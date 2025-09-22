@@ -1,4 +1,5 @@
 # globals.py
+import os
 import pandas as pd
 import numpy as np
 import joblib
@@ -9,31 +10,41 @@ from transformers import AutoModel
 from pathlib import Path
 from huggingface_hub import hf_hub_download
 
+# Base directory
 BACKEND_DIR = Path(__file__).parent.parent
+MODEL_DIR = BACKEND_DIR / "models"
+os.makedirs(MODEL_DIR, exist_ok=True)
 
-# Download scaler from Hugging Face
-scaler_path = hf_hub_download(
-    repo_id="archis99/Novartis-models",
-    filename="scaler_enrollment.pkl"
-)
-scaler = joblib.load(scaler_path)
+# Hugging Face repo
+HF_REPO = "archis99/Novartis-models"
 
-# Download label encoders from hugging face
-label_encoders_path = hf_hub_download(
-    repo_id="archis99/Novartis-models",
-    filename="feature_label_encoders.pkl"
-)
-label_encoders = joblib.load(label_encoders_path)
+# Files to manage
+FILES = {
+    "scaler": "scaler_enrollment.pkl",
+    "label_encoders": "feature_label_encoders.pkl",
+    "unique_attributes": "study_design_attributes.pkl"
+}
 
-# Download unique attributes from hugging face
-unique_attributes_path = hf_hub_download(
-    repo_id="archis99/Novartis-models",
-    filename="study_design_attributes.pkl"
-)
-unique_attributes = joblib.load(unique_attributes_path)
+# Dictionary to hold loaded objects
+loaded_artifacts = {}
 
-# # --- Load saved artifacts using the absolute path ---
-# scaler = joblib.load(BACKEND_DIR / "models/scaler_enrollment.pkl")
-# label_encoders = joblib.load(BACKEND_DIR / "models/feature_label_encoders.pkl")
-# unique_attributes = joblib.load(BACKEND_DIR / "models/study_design_attributes.pkl")
+for key, filename in FILES.items():
+    local_path = MODEL_DIR / filename
 
+    # If not present locally, download from HF
+    if not local_path.exists():
+        print(f"Downloading {filename} from Hugging Face...")
+        hf_hub_download(
+            repo_id=HF_REPO,
+            filename=filename,
+            local_dir=MODEL_DIR,
+            local_dir_use_symlinks=False
+        )
+
+    # Load the artifact 
+    loaded_artifacts[key] = joblib.load(local_path)
+
+# Unpack for usage
+scaler = loaded_artifacts["scaler"]
+label_encoders = loaded_artifacts["label_encoders"]
+unique_attributes = loaded_artifacts["unique_attributes"]
